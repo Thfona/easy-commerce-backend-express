@@ -1,6 +1,6 @@
 # Easy-Commerce
 
-Back-End with Express.
+Easy-Commerce Back-End with Express.
 
 ## Scripts
 
