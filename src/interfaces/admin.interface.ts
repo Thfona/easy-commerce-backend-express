@@ -1,18 +1,15 @@
 import { Document } from 'mongoose';
 
-export interface UserInterface {
+export interface AdminInterface {
   name: {
     first: string;
     last: string;
   };
   email: string;
   password: string;
-  active: boolean;
-  validated: boolean;
-  validationToken: string;
   tokenVersion: number;
   date: Date;
   fullName(): string;
 }
 
-export interface UserDocumentInterface extends UserInterface, Document {}
+export interface AdminDocumentInterface extends AdminInterface, Document {}

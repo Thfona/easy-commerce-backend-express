@@ -1,11 +1,15 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
-import routesV1 from './routes-v1';
-import Environment from './utils/environment.util';
+import { apiRoutesV1 } from './routes';
+import { environmentUtil } from './utils/environment.util';
+import { errorMessageUtil } from './utils/error-message.util';
 import { ErrorInterface } from './interfaces/error.interface';
+import { ErrorResponseInterface } from './interfaces/error-response.interface';
+import { messages } from './constants/messages.constant';
 
 class App {
   public express: Application;
@@ -23,6 +27,7 @@ class App {
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(cors());
+    this.express.use(cookieParser());
 
     const speedLimiter = slowDown({
       windowMs: 15 * 60 * 1000,
@@ -47,13 +52,13 @@ class App {
   }
 
   private initializeRoutes(): void {
-    this.express.use('/api/v1', routesV1);
+    this.express.use('/api/v1', apiRoutesV1);
   }
 
   private initializeErrorHandler(): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     this.express.use((err: ErrorInterface, req: Request, res: Response, next: NextFunction) => {
-      const isDev: boolean = Environment.isProduction;
+      const isDev = !environmentUtil.isProduction;
 
       if (!err.status) {
         err.status = 500;
@@ -64,15 +69,36 @@ class App {
       }
 
       if (err.redirect) {
-        res.status(404).send({ status: 404, message: err.message, redirect: err.redirect });
+        const status = 404;
+
+        const errorResponse: ErrorResponseInterface = {
+          error: {
+            status: status,
+            code: status.toString().concat('Z'),
+            message: errorMessageUtil.parseErrorMessage(err.message) || messages.notFound,
+            redirect: err.redirect
+          }
+        };
+
+        res.status(status).json(errorResponse);
       } else {
-        res.status(err.status).send({ status: err.status, message: err.message });
+        const status = err.status;
+
+        const errorResponse: ErrorResponseInterface = {
+          error: {
+            status: status,
+            code: status.toString().concat('Z'),
+            message: errorMessageUtil.parseErrorMessage(err.message) || messages.serverError
+          }
+        };
+
+        res.status(err.status).json(errorResponse);
       }
     });
   }
 
   private connectDatabase(): void {
-    const db = process.env.DB_HOST || 'mongodb://localhost:27017/easyCommerceDB';
+    const db = environmentUtil.databaseHost;
 
     mongoose
       .connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false })
@@ -87,4 +113,4 @@ class App {
   }
 }
 
-export default new App().express;
+export const app = new App().express;

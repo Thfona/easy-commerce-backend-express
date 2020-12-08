@@ -1,0 +1,10 @@
+{
+  "env": {
+    "NODE_ENV": "development",
+    "DB_HOST": "mongodb://localhost:27017/easyCommerceDB",
+    "PORT": "3000",
+    "ACCESS_TOKEN_SECRET": "sahdb87364t8f2378r8ds7hf2",
+    "REFRESH_TOKEN_SECRET": "sdfns7d8fy87u3fsdjfhsdf8f",
+    "VALIDATION_TOKEN_SECRET": "ashd837y9nc7e93ncsax564ah"
+  }
+}
