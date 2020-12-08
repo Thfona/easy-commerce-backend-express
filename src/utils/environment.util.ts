@@ -1,14 +1,26 @@
 class EnvironmentUtil {
   get isProduction(): boolean {
-    return process.env.NODE_ENV === 'production';
+    if (process.env.NODE_ENV) {
+      return process.env.NODE_ENV === 'production';
+    }
+
+    throw new Error('Node Environment is undefined.');
   }
 
   get databaseHost(): string {
-    return process.env.DB_HOST || 'mongodb://localhost:27017/easyCommerceDB';
+    if (process.env.DB_HOST) {
+      return process.env.DB_HOST;
+    }
+
+    throw new Error('Database Host is undefined.');
   }
 
   get serverPort(): string {
-    return process.env.PORT || '3000';
+    if (process.env.PORT) {
+      return process.env.PORT;
+    }
+
+    throw new Error('Server Port is undefined.');
   }
 
   get accessTokenSecret(): string {

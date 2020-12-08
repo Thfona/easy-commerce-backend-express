@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  easy-commerce-backend:
+    image: easy-commerce-backend
+    build: .
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DB_HOST=${DB_HOST}
+      - PORT=${PORT}
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - VALIDATION_TOKEN_SECRET=${VALIDATION_TOKEN_SECRET}
+    ports:
+      - 3000:3000
+    depends_on:
+      - easy-commerce-database
+  easy-commerce-database:
+    image: mongo
+    ports:
+      - 27017:27017

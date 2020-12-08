@@ -11,6 +11,9 @@ $ npm install
 # Start application in development mode
 $ npm run dev
 
+# Start application in development mode using Docker
+$ npm run dev:docker
+
 # Start application in production mode
 $ npm start
 
