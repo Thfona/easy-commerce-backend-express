@@ -2,74 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { jwtHandlerUtil } from '../utils/jwt-handler.util';
 import { validatorUtil } from '../utils/validator.util';
-import { adminModel } from '../models/admin.model';
 import { userModel } from '../models/user.model';
 import { ErrorResponseInterface } from '../interfaces/error-response.interface';
 import { TokenPayload } from '../interfaces/token-payload.interface';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { role } from '../types/role.type';
 import { messages } from '../constants/messages.constant';
 
 class UsersController {
-  public async getV1(req: Request, res: Response, next: NextFunction): Promise<Response | undefined> {
-    try {
-      const role: role = 'admin';
-
-      const hasAccess = jwtHandlerUtil.validateTokenRole(role, req.tokenPayload);
-
-      // Error: Insufficient role
-      if (!hasAccess) {
-        const status = 403;
-
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.forbidden
-          }
-        };
-
-        return res.status(status).json(errorResponse);
-      }
-
-      const admin = adminModel.findOne({ _id: req.tokenPayload.id });
-
-      // Error: Invalid admin
-      if (!admin) {
-        const status = 401;
-
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.unauthorized
-          }
-        };
-
-        return res.status(status).json(errorResponse);
-      }
-
-      const users = await userModel.find();
-
-      const usersData = users.map((user) => {
-        return {
-          name: {
-            first: user.name.first,
-            last: user.name.last
-          },
-          email: user.email,
-          active: user.active,
-          validated: user.validated
-        };
-      });
-
-      // Success: Users data is returned
-      return res.json(usersData);
-    } catch (error) {
-      next(error);
-    }
-  }
-
   public async getByIdV1(req: Request, res: Response, next: NextFunction): Promise<Response | undefined> {
     try {
       const user = await userModel.findOne({ _id: req.params.id });
@@ -89,13 +27,9 @@ class UsersController {
         return res.status(status).json(errorResponse);
       }
 
-      const role: role = 'admin';
+      const hasAccess = req.tokenPayload.id === user._id.toString();
 
-      const isAdmin = jwtHandlerUtil.validateTokenRole(role, req.tokenPayload);
-
-      const hasAccess = isAdmin || req.tokenPayload.id === user._id.toString();
-
-      // Error: Insufficient role or invalid token for user
+      // Error: Invalid token for user
       if (!hasAccess) {
         const status = 403;
 
@@ -108,25 +42,6 @@ class UsersController {
         };
 
         return res.status(status).json(errorResponse);
-      }
-
-      if (isAdmin) {
-        const admin = adminModel.findOne({ _id: req.tokenPayload.id });
-
-        // Error: Invalid admin
-        if (!admin) {
-          const status = 401;
-
-          const errorResponse: ErrorResponseInterface = {
-            error: {
-              status: status,
-              code: status.toString().concat('A'),
-              message: messages.unauthorized
-            }
-          };
-
-          return res.status(status).json(errorResponse);
-        }
       }
 
       const userData = {
@@ -202,7 +117,6 @@ class UsersController {
       const validationToken = jwtHandlerUtil.signValidationToken({
         ...userInfo,
         id: createdUser!._id,
-        role: 'user',
         tokenVersion: createdUser!.tokenVersion
       });
 
@@ -348,7 +262,6 @@ class UsersController {
           first: user.name.first,
           last: user.name.last
         },
-        role: 'user',
         tokenVersion: user.tokenVersion
       };
 

@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import { authenticationUtil } from '../utils/authentication.util';
 import { jwtHandlerUtil } from '../utils/jwt-handler.util';
 import { validatorUtil } from '../utils/validator.util';
-import { adminModel } from '../models/admin.model';
 import { userModel } from '../models/user.model';
 import { ErrorResponseInterface } from '../interfaces/error-response.interface';
 import { TokenPayload } from '../interfaces/token-payload.interface';
@@ -88,7 +87,6 @@ class AuthenticationController {
           first: user.name.first,
           last: user.name.last
         },
-        role: 'user',
         tokenVersion: user.tokenVersion
       };
 
@@ -113,10 +111,9 @@ class AuthenticationController {
   public async refreshAccessTokenV1(req: Request, res: Response, next: NextFunction): Promise<Response | undefined> {
     try {
       const user = await userModel.findOne({ _id: req.tokenPayload.id });
-      const admin = await adminModel.findOne({ _id: req.tokenPayload.id });
 
       // Error: Invalid token
-      if (!user && !admin) {
+      if (!user) {
         const status = 401;
 
         const errorResponse: ErrorResponseInterface = {
@@ -130,33 +127,15 @@ class AuthenticationController {
         return res.status(status).json(errorResponse);
       }
 
-      let tokenPayload: TokenPayload;
-
-      if (user) {
-        tokenPayload = {
-          id: user._id,
-          email: user.email,
-          name: {
-            first: user.name.first,
-            last: user.name.last
-          },
-          role: 'user',
-          tokenVersion: user.tokenVersion
-        };
-      }
-
-      if (admin) {
-        tokenPayload = {
-          id: admin._id,
-          email: admin.email,
-          name: {
-            first: admin.name.first,
-            last: admin.name.last
-          },
-          role: 'admin',
-          tokenVersion: admin.tokenVersion
-        };
-      }
+      const tokenPayload: TokenPayload = {
+        id: user._id,
+        email: user.email,
+        name: {
+          first: user.name.first,
+          last: user.name.last
+        },
+        tokenVersion: user.tokenVersion
+      };
 
       const accessToken = jwtHandlerUtil.signAccessToken(tokenPayload!);
 

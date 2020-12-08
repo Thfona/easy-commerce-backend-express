@@ -1,13 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { environmentUtil } from './environment.util';
-import { adminModel } from '../models/admin.model';
 import { userModel } from '../models/user.model';
 import { ErrorResponseInterface } from '../interfaces/error-response.interface';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import { errorMessageUtil } from './error-message.util';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { role } from '../types/role.type';
 import { messages } from '../constants/messages.constant';
 
 class JwtHandlerUtil {
@@ -33,10 +30,6 @@ class JwtHandlerUtil {
     }
 
     return new Date().toUTCString();
-  }
-
-  public validateTokenRole(role: role, payload: TokenPayload): boolean {
-    return role === payload.role;
   }
 
   public signAccessToken(payload: TokenPayload): string {
@@ -119,22 +112,11 @@ class JwtHandlerUtil {
 
       req.tokenPayload = tokenPayload as TokenPayload;
 
-      // Error: Token revoked (user)
-      if (req.tokenPayload.role === 'user') {
-        const user = await userModel.findOne({ _id: req.tokenPayload.id });
+      // Error: Token revoked
+      const user = await userModel.findOne({ _id: req.tokenPayload.id });
 
-        if (user && !(req.tokenPayload.tokenVersion === user.tokenVersion)) {
-          return res.status(unauthorizedStatus).json(unauthorizedErrorResponse);
-        }
-      }
-
-      // Error: Token revoked (admin)
-      if (req.tokenPayload.role === 'admin') {
-        const admin = await adminModel.findOne({ _id: req.tokenPayload.id });
-
-        if (admin && !(req.tokenPayload.tokenVersion === admin.tokenVersion)) {
-          return res.status(unauthorizedStatus).json(unauthorizedErrorResponse);
-        }
+      if (user && !(req.tokenPayload.tokenVersion === user.tokenVersion)) {
+        return res.status(unauthorizedStatus).json(unauthorizedErrorResponse);
       }
 
       next();

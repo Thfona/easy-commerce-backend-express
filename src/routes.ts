@@ -17,7 +17,6 @@ routesV1.post(
 routesV1.post(`${authenticationPath}/logout`, authenticationController.logoutV1);
 
 // Users
-routesV1.get('/users', jwtHandlerUtil.verifyAuthorization, usersController.getV1);
 routesV1.get('/users/:id', jwtHandlerUtil.verifyAuthorization, usersController.getByIdV1);
 routesV1.post('/users', usersController.registerV1);
 routesV1.post('/users/:id/validate', jwtHandlerUtil.verifyAuthorization, usersController.validateV1);
