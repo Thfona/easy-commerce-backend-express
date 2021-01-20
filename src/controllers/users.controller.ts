@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
+import { errorResponseUtil } from '../utils/error-response.util';
 import { jwtHandlerUtil } from '../utils/jwt-handler.util';
 import { validatorUtil } from '../utils/validator.util';
 import { userModel } from '../models/user.model';
-import { ErrorResponseInterface } from '../interfaces/error-response.interface';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import { messages } from '../constants/messages.constant';
 
@@ -16,13 +16,7 @@ class UsersController {
       if (!user) {
         const status = 404;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.unauthorized
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.unauthorized);
 
         return res.status(status).json(errorResponse);
       }
@@ -33,13 +27,7 @@ class UsersController {
       if (!hasAccess) {
         const status = 403;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.forbidden
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.forbidden);
 
         return res.status(status).json(errorResponse);
       }
@@ -69,13 +57,7 @@ class UsersController {
       if (error) {
         const status = 400;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: parsedErrorMessage
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, parsedErrorMessage);
 
         return res.status(status).json(errorResponse);
       }
@@ -139,13 +121,7 @@ class UsersController {
       if (!user) {
         const status = 404;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.notFound
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.notFound);
 
         return res.status(status).json(errorResponse);
       }
@@ -153,13 +129,7 @@ class UsersController {
       if (user.validated) {
         const status = 422;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.userAlreadyValidated
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.userAlreadyValidated);
 
         return res.status(status).json(errorResponse);
       }
@@ -173,13 +143,7 @@ class UsersController {
       if (!hasAccess) {
         const status = 403;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.forbidden
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.forbidden);
 
         return res.status(status).json(errorResponse);
       }
@@ -205,13 +169,7 @@ class UsersController {
       if (error) {
         const status = 400;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: parsedErrorMessage
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, parsedErrorMessage);
 
         return res.status(status).json(errorResponse);
       }
@@ -220,13 +178,11 @@ class UsersController {
 
       const unauthorizedStatus = 401;
 
-      const unauthorizedErrorResponse: ErrorResponseInterface = {
-        error: {
-          status: unauthorizedStatus,
-          code: unauthorizedStatus.toString().concat('A'),
-          message: messages.unauthorizedLogin
-        }
-      };
+      const unauthorizedErrorResponse = errorResponseUtil.getErrorResponse(
+        'A',
+        unauthorizedStatus,
+        messages.unauthorizedLogin
+      );
 
       // Error: Invalid user
       if (!user) {
@@ -244,13 +200,7 @@ class UsersController {
       if (user.validated) {
         const status = 422;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.userAlreadyValidated
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.userAlreadyValidated);
 
         return res.status(status).json(errorResponse);
       }
@@ -284,13 +234,7 @@ class UsersController {
       if (!user) {
         const status = 404;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.notFound
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.notFound);
 
         return res.status(status).json(errorResponse);
       }
@@ -301,13 +245,7 @@ class UsersController {
       if (!hasAccess) {
         const status = 403;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.forbidden
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.forbidden);
 
         return res.status(status).json(errorResponse);
       }

@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { environmentUtil } from './environment.util';
 import { userModel } from '../models/user.model';
-import { ErrorResponseInterface } from '../interfaces/error-response.interface';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import { errorMessageUtil } from './error-message.util';
+import { errorResponseUtil } from './error-response.util';
 import { messages } from '../constants/messages.constant';
 
 class JwtHandlerUtil {
@@ -52,13 +52,11 @@ class JwtHandlerUtil {
     try {
       const unauthorizedStatus = 401;
 
-      const unauthorizedErrorResponse: ErrorResponseInterface = {
-        error: {
-          status: unauthorizedStatus,
-          code: unauthorizedStatus.toString().concat('Y'),
-          message: messages.unauthorized
-        }
-      };
+      let unauthorizedErrorResponse = errorResponseUtil.getErrorResponse(
+        'Y',
+        unauthorizedStatus,
+        messages.unauthorized
+      );
 
       let token;
       let tokenSecret;
@@ -99,9 +97,17 @@ class JwtHandlerUtil {
       } catch (error) {
         if (error.message) {
           if (error.message === 'jwt expired') {
-            unauthorizedErrorResponse.error.code = unauthorizedStatus.toString().concat('X');
+            unauthorizedErrorResponse = errorResponseUtil.getErrorResponse(
+              'X',
+              unauthorizedStatus,
+              messages.unauthorized
+            );
           } else {
-            unauthorizedErrorResponse.error.code = unauthorizedStatus.toString().concat('W');
+            unauthorizedErrorResponse = errorResponseUtil.getErrorResponse(
+              'W',
+              unauthorizedStatus,
+              messages.unauthorized
+            );
           }
 
           unauthorizedErrorResponse.error.message = errorMessageUtil.parseErrorMessage(error.message);

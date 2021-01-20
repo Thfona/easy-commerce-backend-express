@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { authenticationUtil } from '../utils/authentication.util';
+import { errorResponseUtil } from '../utils/error-response.util';
 import { jwtHandlerUtil } from '../utils/jwt-handler.util';
 import { validatorUtil } from '../utils/validator.util';
 import { userModel } from '../models/user.model';
-import { ErrorResponseInterface } from '../interfaces/error-response.interface';
 import { TokenPayload } from '../interfaces/token-payload.interface';
 import { messages } from '../constants/messages.constant';
 
@@ -17,13 +17,7 @@ class AuthenticationController {
       if (error) {
         const status = 400;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: parsedErrorMessage
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, parsedErrorMessage);
 
         return res.status(status).json(errorResponse);
       }
@@ -32,13 +26,11 @@ class AuthenticationController {
 
       const unauthorizedStatus = 401;
 
-      const unauthorizedErrorResponse: ErrorResponseInterface = {
-        error: {
-          status: unauthorizedStatus,
-          code: unauthorizedStatus.toString().concat('A'),
-          message: messages.unauthorizedLogin
-        }
-      };
+      const unauthorizedErrorResponse = errorResponseUtil.getErrorResponse(
+        'A',
+        unauthorizedStatus,
+        messages.unauthorizedLogin
+      );
 
       // Error: Invalid user
       if (!user) {
@@ -56,26 +48,14 @@ class AuthenticationController {
 
       // Error: Unvalidated user
       if (!user.validated) {
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: forbiddenStatus,
-            code: forbiddenStatus.toString().concat('A'),
-            message: messages.unvalidatedLogin
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', forbiddenStatus, messages.unvalidatedLogin);
 
         return res.status(forbiddenStatus).json(errorResponse);
       }
 
       // Error: Inactive user
       if (!user.active) {
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: forbiddenStatus,
-            code: forbiddenStatus.toString().concat('B'),
-            message: messages.inactiveLogin
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('B', forbiddenStatus, messages.inactiveLogin);
 
         return res.status(forbiddenStatus).json(errorResponse);
       }
@@ -116,13 +96,7 @@ class AuthenticationController {
       if (!user) {
         const status = 401;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('A'),
-            message: messages.unauthorized
-          }
-        };
+        const errorResponse = errorResponseUtil.getErrorResponse('A', status, messages.unauthorized);
 
         return res.status(status).json(errorResponse);
       }

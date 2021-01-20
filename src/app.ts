@@ -7,8 +7,8 @@ import slowDown from 'express-slow-down';
 import { apiRoutesV1 } from './routes';
 import { environmentUtil } from './utils/environment.util';
 import { errorMessageUtil } from './utils/error-message.util';
+import { errorResponseUtil } from './utils/error-response.util';
 import { ErrorInterface } from './interfaces/error.interface';
-import { ErrorResponseInterface } from './interfaces/error-response.interface';
 import { messages } from './constants/messages.constant';
 
 class App {
@@ -71,26 +71,17 @@ class App {
       if (err.redirect) {
         const status = 404;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('Z'),
-            message: errorMessageUtil.parseErrorMessage(err.message) || messages.notFound,
-            redirect: err.redirect
-          }
-        };
+        const message = errorMessageUtil.parseErrorMessage(err.message) || messages.notFound;
+
+        const errorResponse = errorResponseUtil.getErrorResponse('Z', status, message, err.redirect);
 
         res.status(status).json(errorResponse);
       } else {
         const status = err.status;
 
-        const errorResponse: ErrorResponseInterface = {
-          error: {
-            status: status,
-            code: status.toString().concat('Z'),
-            message: errorMessageUtil.parseErrorMessage(err.message) || messages.serverError
-          }
-        };
+        const message = errorMessageUtil.parseErrorMessage(err.message) || messages.serverError;
+
+        const errorResponse = errorResponseUtil.getErrorResponse('Z', status, message);
 
         res.status(err.status).json(errorResponse);
       }
