@@ -3,42 +3,64 @@
 /tmp
 /out-tsc
 /bazel-out
+/build/Release
 
 # Dependencies
 /node_modules
+/jspm_packages
+/bower_components
 
 # Profiling Files
 chrome-profiler-events*.json
 speed-measure-plugin*.json
 
-# IDEs and Editors
+# IDEs and editors
 /.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-.vscode/*
+/.settings
+/.c9
+/.history
+/.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.history/*
+.project
+.classpath
+*.launch
+*.sublime-workspace
 
 # System Files
 .DS_Store
 Thumbs.db
 
 # Misc
-public
-.cache
-package-lock.json
+/public
+/.cache
+/.eslintcache
 /.sass-cache
 /connect.lock
 /coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
 /typings
+/lib-cov
+/.nyc_output
+/.grunt
+/.lock-wscript
+/.npm
+/.node_repl_history
+/pids
+/logs
+/libpeerconnection.log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+testem.log*
+*.pid
+*.seed
+*.pid.lock
+*.tgz
+*.pnp
+*.pnp.*
+.yarn-integrity
+.env
+package-lock.json
