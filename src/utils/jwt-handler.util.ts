@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { SignOptions } from 'jsonwebtoken';
+import { authenticationUtil } from './authentication.util';
 import { environmentUtil } from './environment.util';
 import { userModel } from '../models/user.model';
 import { TokenPayload } from '../interfaces/token-payload.interface';
@@ -64,7 +65,9 @@ class JwtHandlerUtil {
       const refreshTokenRoutes = ['/authentication/refresh-access-token'];
 
       if (refreshTokenRoutes.includes(req.route.path)) {
-        token = req.cookies.refreshToken;
+        const refreshTokenCookieName = authenticationUtil.refreshTokenCookieName;
+
+        token = req.cookies[refreshTokenCookieName];
 
         tokenSecret = environmentUtil.refreshTokenSecret;
       } else {

@@ -31,6 +31,9 @@ speed-measure-plugin*.json
 Thumbs.db
 
 # Misc
+public
+.cache
+package-lock.json
 /.sass-cache
 /connect.lock
 /coverage
