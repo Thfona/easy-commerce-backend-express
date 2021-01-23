@@ -4,7 +4,7 @@ Easy-Commerce Back-End with Express.
 
 ## Scripts
 
-``` bash
+```bash
 # Install dependencies
 $ npm install
 

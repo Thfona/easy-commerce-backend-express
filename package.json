@@ -12,8 +12,8 @@
     "build": "tsc -p .",
     "lint": "eslint ./src && npm run prettier",
     "lint:fix": "eslint ./src --fix && npm run prettier:fix",
-    "prettier": "prettier --config ./.prettierrc --check \"./**/*{.ts,.js,.json,.css,.scss}\"",
-    "prettier:fix": "prettier --config ./.prettierrc --check \"./**/*{.ts,.js,.json,.css,.scss}\" --write"
+    "prettier": "prettier --config ./.prettierrc --check \"./**/*.{ts,tsx,js,jsx,json,md,css,scss}\"",
+    "prettier:fix": "prettier --config ./.prettierrc --check \"./**/*.{ts,tsx,js,jsx,json,md,css,scss}\" --write"
   },
   "pre-commit": [
     "lint"
