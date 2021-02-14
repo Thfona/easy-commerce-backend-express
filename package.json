@@ -1,7 +1,7 @@
 {
   "name": "easy-commerce",
   "version": "1.0.0",
-  "description": "Easy-Commerce backend with Express.",
+  "description": "Easy-Commerce Back-End with Express.",
   "author": "Thfona",
   "license": "MIT",
   "private": true,
